@@ -1,7 +1,7 @@
 # am-messaging
 
 
-[![Build Status]()]()
+[![Build Status](https://travis-ci.com/chesapeaketechnology/am-messaging.svg?branch=develop)](https://travis-ci.com/chesapeaketechnology/am-messaging)
 
 ## Common cross-platform performant and adaptable serialization for RF and GNSS data over DIL networks.
 

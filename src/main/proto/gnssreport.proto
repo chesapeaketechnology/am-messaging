@@ -63,10 +63,10 @@ message GnssReport {
 //     assert (90.0, 10.0) == NormalizeLatLng(-270.0, 10.0)
 message LatLng {
     // The latitude in degrees. It must be in the range [-90.0, +90.0].
-    double latitude = 1;
+    int32 latitude = 1;
 
     // The longitude in degrees. It must be in the range [-180.0, +180.0].
-    double longitude = 2;
+    int32 longitude = 2;
 }
 
 message GNSSMeasurement {
@@ -86,7 +86,7 @@ message GNSSMeasurement {
     //dB-hz
     float cn0DbHz = 6;
     //Carrier center frequency as reported by receiver
-    float carrierFrequencyHz = 7;
+    int64 carrierFrequencyHz = 7;
     //Horitzontal Dilution of Precision
     float hDop = 8;
     //Vertical Dilution of Precision
