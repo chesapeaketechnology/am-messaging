@@ -14,10 +14,10 @@ stages:
   - name: build
   - name: snapshot
     # only publish snapshots from "master" branch and not in pull requests
-    if: branch = master AND type IN (push)
+    if: branch = develop AND type IN (push)
   - name: release
     # only publish releases from "release" branch and not in pull requests
-    if: branch = release AND type IN (push)
+    if: branch = master AND type IN (push)
 
 jobs:
   include:
