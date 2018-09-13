@@ -241,3 +241,4 @@ dkms.conf
 # *.logs
 
 
+.DS_Store
