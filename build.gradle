@@ -1,0 +1,205 @@
+
+
+plugins {
+    id "com.jfrog.bintray" version "1.8.0"
+    id "com.jfrog.artifactory" version "4.5.4"
+    id 'net.researchgate.release' version '2.6.0'
+    id "maven-publish"
+    id "java"
+    id 'idea'
+    id "com.google.protobuf" version "0.8.6"
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+
+group 'gov.agilemeridian'
+
+ext{
+    bintrayUser = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
+    bintrayKey = project.hasProperty('bintray.key') ? project.property('bintray.key') : System.getenv('BINTRAY_KEY')
+    buildNumber = System.getProperty("build.number")
+    artifactName = "am-messaging"
+}
+
+dependencies {
+
+    //android support
+    compile 'io.grpc:grpc-protobuf-lite:1.14.0'
+    compile 'com.google.api.grpc:googleapis-common-protos:0.0.3'
+    compile 'de.danielbechler:java-object-diff:0.95'
+
+    protobuf 'com.google.protobuf:protobuf-java:3.1.0'
+    compile 'io.grpc:grpc-stub:1.14.0'
+    if (JavaVersion.current().isJava9Compatible()) {
+        // Workaround for @javax.annotation.Generated
+        // see: https://github.com/grpc/grpc-java/issues/3633
+        compile 'javax.annotation:javax.annotation-api:1.3.1'
+    }
+
+
+    testCompile 'junit:junit:4.12'
+    // Extra proto source files for test besides the ones residing under
+    // "src/test".
+
+}
+
+
+// run gradle with "-Dsnapshot=true" to automatically append "-SNAPSHOT" to the version
+version = '0.0.1' + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
+sourceCompatibility = 1.8
+
+
+release {
+    failOnPublishNeeded = false
+    git {
+        requireBranch = 'release/' + project.version.minus('-SNAPSHOT')
+    }
+}
+
+
+//Protobuf generation tasks
+protobuf {
+    protoc {
+        // The artifact spec for the Protobuf Compiler
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+    plugins {
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0-pre2'
+        }
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+
+    generateProtoTasks {
+        all()*.plugins {
+            javalite {}
+        }
+
+        all().each { task ->
+            task.builtins {
+                cpp {}
+                remove java
+                python {}
+            }
+        }
+
+    }
+}
+
+
+//Tasks for publishing and other configurations
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc.failOnError = false
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+afterReleaseBuild.dependsOn bintrayUpload
+
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "steveturner"
+            name "Steven Turner"
+            email "sturner@ctic-inc.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/chesapeaketechnology/am-messaging"
+    }
+}
+
+publishing {
+    publications {
+        mavenPublication(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            artifactId artifactName
+            version  project.version
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Common messaing format for multiple platforms')
+                root.appendNode('name', 'Agile Meridian Messaging Library')
+                root.appendNode('url', 'https://github.com/chesapeaketechnology/am-messaging')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+artifactory {
+    contextUrl = 'http://oss.jfrog.org'
+    publish {
+        repository {
+            repoKey = 'oss-snapshot-local'
+            username = bintrayUser
+            password = bintrayKey
+        }
+        defaults {
+            publications('mavenPublication')
+            publishArtifacts = true
+            publishPom = true
+            properties = [
+                    'build.number': buildNumber,
+                    'build.name': artifactName
+            ]
+        }
+    }
+    resolve {
+        repoKey = 'jcenter'
+    }
+    clientConfig.info.setBuildNumber(buildNumber)
+    clientConfig.info.setBuildName(artifactName)
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayKey
+    def repoName = project.hasProperty('bintrayRepoName') ? project.property('bintrayRepoName') : System.getenv('BINTRAY_REPO_NAME')
+    publications = ['mavenPublication']
+    override = true
+    pkg {
+        repo = 'maven-public'
+        name = artifactName
+        userOrg = 'chesapeaketechnology'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/chesapeaketechnology/am-messaging'
+        labels = ['protobuf', 'gnss', 'low-bandwidth']
+        version {
+            name = project.version
+            released  = new Date()
+            vcsTag = project.version
+        }
+    }
+}
+
