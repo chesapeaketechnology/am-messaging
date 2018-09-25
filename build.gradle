@@ -1,7 +1,7 @@
 
 
 plugins {
-    id "com.jfrog.bintray" version "1.8.0"
+    id "com.jfrog.bintray" version "1.8.1"
     id "com.jfrog.artifactory" version "4.5.4"
     id 'net.researchgate.release' version '2.6.0'
     id "maven-publish"
@@ -22,7 +22,7 @@ ext{
     bintrayUser = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
     bintrayKey = project.hasProperty('bintray.key') ? project.property('bintray.key') : System.getenv('BINTRAY_KEY')
     buildNumber = System.getProperty("build.number")
-    artifactName = "am-messaging"
+    artifactName = 'am-messaging'
 }
 
 dependencies {
@@ -56,7 +56,7 @@ sourceCompatibility = 1.8
 release {
     failOnPublishNeeded = false
     git {
-        requireBranch = 'release/' + project.version.minus('-SNAPSHOT')
+        requireBranch = 'master'
     }
 }
 
@@ -136,7 +136,7 @@ def pomConfig = {
 
 publishing {
     publications {
-        mavenPublication(MavenPublication) {
+        protobufPublication(MavenPublication) {
             from components.java
             artifact sourcesJar {
                 classifier "sources"
@@ -144,6 +144,7 @@ publishing {
             artifact javadocJar {
                 classifier "javadoc"
             }
+            groupId group
             artifactId artifactName
             version  project.version
             pom.withXml {
@@ -185,8 +186,7 @@ artifactory {
 bintray {
     user = bintrayUser
     key = bintrayKey
-    def repoName = project.hasProperty('bintrayRepoName') ? project.property('bintrayRepoName') : System.getenv('BINTRAY_REPO_NAME')
-    publications = ['mavenPublication']
+    publications = ['protobufPublication']
     override = true
     pkg {
         repo = 'maven-public'
