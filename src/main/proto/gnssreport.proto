@@ -6,8 +6,16 @@ package gov.agilemeridian.gnss;
 
 option java_outer_classname = "GnssReportProto";
 
-// An object representing a GNSS report at a particular LAT/LON.
 
+message PacketWrapper {
+    oneof payload {
+        GnssReport gnssReport = 1;
+    }
+}
+
+
+
+// An object representing a GNSS report at a particular LAT/LON.
 message GnssReport {
 
     //Identify device or user. Must be less than 10 characters.
