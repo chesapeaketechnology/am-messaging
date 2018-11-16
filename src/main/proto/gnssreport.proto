@@ -10,15 +10,15 @@ option java_outer_classname = "GnssReportProto";
 
 message GnssReport {
 
-    //Identify device or user. Must be less than 10 characters.
+    // Identify device or user. Must be less than 10 characters.
     string callsign = 1;
-    //Position of reading
+    // Position of reading
     LatLng latLng = 2;
-    //Altitude of reading
+    // Altitude of reading
     float altitude = 3;
-    //Timestamp of recorded sample
+    // Timestamp of recorded sample
     google.protobuf.Timestamp sysTime = 4;
-    //Array of measurements from constellations / bands
+    // Array of measurements from constellations / bands
     repeated GNSSMeasurement measurements = 5;
 }
 
@@ -72,30 +72,34 @@ message LatLng {
 message GNSSMeasurement {
 
 
-    //Status of detections
+    // Status of detections
     RfStatus rfStatus = 1;
 
-    //Satellite ID
+    // Satellite ID
     int32 svId = 2;
-    //Constellation
+    // Constellation
     Constellation constellation = 3;
-    //dB
+    // dB
     float sNrdB = 4;
-    //dB
+    // dB
     float agcdB = 5;
-    //dB-hz
+    // dB-hz
     float cn0DbHz = 6;
-    //Carrier center frequency as reported by receiver
+    // Carrier center frequency as reported by receiver
     int64 carrierFrequencyHz = 7;
-    //Horitzontal Dilution of Precision
+    // Horitzontal Dilution of Precision
     float hDop = 8;
-    //Vertical Dilution of Precision
+    // Vertical Dilution of Precision
     float vDop = 9;
+    // System Penalty
+    int32 systemPenalty = 10;
+    // J/S L1
+    float jsRatioL1 = 11;
 }
 
 
 enum RfStatus {
-    //Unknown if initializing, calibrating, etc.
+    // Unknown if initializing, calibrating, etc.
     UNKNOWN_STATUS = 0;
     OK = 1;
     JAMMED = 2;
@@ -105,9 +109,10 @@ enum RfStatus {
 enum Constellation {
     UNKNOWN = 0;
     GPS = 1;
-    SBAS = 2;
-    GLONASS =3;
-    QZSS = 4;
-    BEIDOU = 5;
-    GALILEO = 6;
+    GLONASS = 2;
+    QZSS = 3;
+    BEIDOU = 4;
+    GALILEO = 5;
+    SBAS = 6;
+    GBAS = 7;
 }
