@@ -1,7 +1,7 @@
 
 
 plugins {
-    id "com.jfrog.bintray" version "1.8.0"
+    id "com.jfrog.bintray" version "1.8.1"
     id "com.jfrog.artifactory" version "4.5.4"
     id 'net.researchgate.release' version '2.6.0'
     id "maven-publish"
@@ -22,18 +22,21 @@ ext{
     bintrayUser = project.hasProperty('bintray.user') ? project.property('bintray.user') : System.getenv('BINTRAY_USER')
     bintrayKey = project.hasProperty('bintray.key') ? project.property('bintray.key') : System.getenv('BINTRAY_KEY')
     buildNumber = System.getProperty("build.number")
-    artifactName = "am-messaging"
+    artifactName = 'am-messaging'
 }
 
 dependencies {
 
     //android support
-    compile 'io.grpc:grpc-protobuf-lite:1.14.0'
-    compile 'com.google.api.grpc:googleapis-common-protos:0.0.3'
-    compile 'de.danielbechler:java-object-diff:0.95'
+    compile 'io.grpc:grpc-protobuf-lite:1.15.0'
+    compile (group:'com.google.api.grpc', name: 'googleapis-common-protos', version: '0.0.3') {
+        transitive = false
+    }
+//    Support object diffing for bandwidth reduction over low-bandwidth links
+//    this should provide better performance than traditional compression as utilized in simulation protocols.
+//    compile 'de.danielbechler:java-object-diff:0.95'
 
     protobuf 'com.google.protobuf:protobuf-java:3.1.0'
-    compile 'io.grpc:grpc-stub:1.14.0'
     if (JavaVersion.current().isJava9Compatible()) {
         // Workaround for @javax.annotation.Generated
         // see: https://github.com/grpc/grpc-java/issues/3633
@@ -49,14 +52,14 @@ dependencies {
 
 
 // run gradle with "-Dsnapshot=true" to automatically append "-SNAPSHOT" to the version
-version = '0.0.1' + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
+version = '0.0.3' + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
 sourceCompatibility = 1.8
 
 
 release {
     failOnPublishNeeded = false
     git {
-        requireBranch = 'release/' + project.version.minus('-SNAPSHOT')
+        requireBranch = 'master'
     }
 }
 
@@ -65,11 +68,11 @@ release {
 protobuf {
     protoc {
         // The artifact spec for the Protobuf Compiler
-        artifact = 'com.google.protobuf:protoc:3.0.0'
+        artifact = 'com.google.protobuf:protoc:3.5.1-1'
     }
     plugins {
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.0-pre2'
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.15.0'
         }
         javalite {
             artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
@@ -136,7 +139,7 @@ def pomConfig = {
 
 publishing {
     publications {
-        mavenPublication(MavenPublication) {
+        protobufPublication(MavenPublication) {
             from components.java
             artifact sourcesJar {
                 classifier "sources"
@@ -144,6 +147,7 @@ publishing {
             artifact javadocJar {
                 classifier "javadoc"
             }
+            groupId group
             artifactId artifactName
             version  project.version
             pom.withXml {
@@ -185,8 +189,7 @@ artifactory {
 bintray {
     user = bintrayUser
     key = bintrayKey
-    def repoName = project.hasProperty('bintrayRepoName') ? project.property('bintrayRepoName') : System.getenv('BINTRAY_REPO_NAME')
-    publications = ['mavenPublication']
+    publications = ['protobufPublication']
     override = true
     pkg {
         repo = 'maven-public'

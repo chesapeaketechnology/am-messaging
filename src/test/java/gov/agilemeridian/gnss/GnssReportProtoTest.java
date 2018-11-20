@@ -1,5 +1,6 @@
 package gov.agilemeridian.gnss;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
 import org.junit.Test;
 
@@ -47,7 +48,31 @@ public class GnssReportProtoTest
                 }
         );
 
-        byte[] serialized = report.build().toByteArray();
+        GnssReportProto.PacketWrapper wrapperToEncode = GnssReportProto.PacketWrapper.newBuilder().setGnssReport(report).build();
+
+
+
+        byte[] serialized = wrapperToEncode.toByteArray();
+
+        try
+        {
+            GnssReportProto.PacketWrapper wrapperDeserialized = GnssReportProto.PacketWrapper.parseFrom(serialized);
+
+
+            switch (wrapperDeserialized.getPayloadCase()){
+                case GNSSREPORT:
+                    wrapperDeserialized.getGnssReport();
+                    assertTrue(wrapperDeserialized.getGnssReport().hasLatLng());
+                    break;
+                case PAYLOAD_NOT_SET:
+                default:
+                    throw new InvalidProtocolBufferException("Invalid payload definition in GNSS Packet");
+
+            }
+        } catch (InvalidProtocolBufferException e)
+        {
+            e.printStackTrace();
+        }
 
         Deflater compresser = new Deflater();
         compresser.setInput(serialized);
