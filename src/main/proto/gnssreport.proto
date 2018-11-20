@@ -63,10 +63,10 @@ message GnssReport {
 //     assert (90.0, 10.0) == NormalizeLatLng(-270.0, 10.0)
 message LatLng {
     // The latitude in degrees. It must be in the range [-90.0, +90.0].
-    int32 latitude = 1;
+    float latitude = 1;
 
     // The longitude in degrees. It must be in the range [-180.0, +180.0].
-    int32 longitude = 2;
+    float longitude = 2;
 }
 
 message GNSSMeasurement {
