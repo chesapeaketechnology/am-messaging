@@ -1,4 +1,4 @@
-# Contribute to Greynet sVoice
+# Contribute to AM-Messaging
 
 This guide details how to use issues and pull requests (for new code) to improve sVoice and related projects.
 
@@ -18,7 +18,7 @@ We strongly suggest that you use the `voltron-intellij.xml` template file, inclu
 
 ## Issue tracker
 
-The [issue tracker](https://jira.ctic-inc.com/secure/RapidBoard.jspa?rapidView=122&view=planning&selectedIssue=GREYN-160&epics=visible) is only for obvious bugs, misbehavior, & feature requests in the latest stable or development release of sVoice. When submitting an issue please conform to the issue submission guidelines listed below. Not all issues will be addressed and your issue is more likely to be addressed if you submit a pull request which partially or fully addresses the issue.
+The [issue tracker](...) is only for obvious bugs, misbehavior, & feature requests in the latest stable or development release of sVoice. When submitting an issue please conform to the issue submission guidelines listed below. Not all issues will be addressed and your issue is more likely to be addressed if you submit a pull request which partially or fully addresses the issue.
 
 ### Issue tracker guidelines
 
