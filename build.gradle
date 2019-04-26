@@ -5,7 +5,7 @@ plugins {
     id "com.jfrog.artifactory" version "4.5.4"
     id 'net.researchgate.release' version '2.6.0'
     id "maven-publish"
-    id "java"
+    id "java-library"
     id 'idea'
     id "com.google.protobuf" version "0.8.6"
 }
@@ -28,7 +28,9 @@ ext{
 dependencies {
 
     //android support
-    compile 'io.grpc:grpc-protobuf-lite:1.15.0'
+    implementation ('io.grpc:grpc-protobuf-lite:1.15.0') {
+        transitive = true
+    }
     compile (group:'com.google.api.grpc', name: 'googleapis-common-protos', version: '0.0.3') {
         transitive = false
     }
@@ -52,7 +54,7 @@ dependencies {
 
 
 // run gradle with "-Dsnapshot=true" to automatically append "-SNAPSHOT" to the version
-version = '0.0.3' + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
+version = '0.0.4' + (Boolean.valueOf(System.getProperty("snapshot")) ? "-SNAPSHOT" : "")
 sourceCompatibility = 1.8
 
 
