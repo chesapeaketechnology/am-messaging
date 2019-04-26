@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
 
 package gov.agilemeridian.gnss;
 
@@ -23,7 +24,7 @@ message GnssReport {
     // Position of reading
     LatLng latLng = 2;
     // Altitude of reading
-    float altitude = 3;
+    google.protobuf.FloatValue altitude = 3;
     // Timestamp of recorded sample
     google.protobuf.Timestamp sysTime = 4;
     // Array of measurements from constellations / bands
@@ -84,25 +85,25 @@ message GNSSMeasurement {
     RfStatus rfStatus = 1;
 
     // Satellite ID
-    int32 svId = 2;
+    google.protobuf.Int32Value svId = 2;
     // Constellation
     Constellation constellation = 3;
     // dB
-    float sNrdB = 4;
+    google.protobuf.FloatValue sNrdB = 4;
     // dB
-    float agcdB = 5;
+    google.protobuf.FloatValue agcdB = 5;
     // dB-hz
-    float cn0DbHz = 6;
+    google.protobuf.FloatValue cn0DbHz = 6;
     // Carrier center frequency as reported by receiver
-    int64 carrierFrequencyHz = 7;
+    google.protobuf.Int64Value carrierFrequencyHz = 7;
     // Horitzontal Dilution of Precision
-    float hDop = 8;
+    google.protobuf.FloatValue hDop = 8;
     // Vertical Dilution of Precision
-    float vDop = 9;
+    google.protobuf.FloatValue vDop = 9;
     // System Penalty
-    int32 systemPenalty = 10;
+    google.protobuf.Int32Value systemPenalty = 10;
     // J/S L1
-    float jsRatioL1 = 11;
+    google.protobuf.FloatValue jsRatioL1 = 11;
 }
 
 
