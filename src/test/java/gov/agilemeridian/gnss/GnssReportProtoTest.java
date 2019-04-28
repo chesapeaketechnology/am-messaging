@@ -1,21 +1,18 @@
 package gov.agilemeridian.gnss;
 
 import com.google.protobuf.FloatValue;
-import com.google.protobuf.FloatValueOrBuilder;
 import com.google.protobuf.Int32Value;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.Timestamp;
+import gov.agilemeridian.util.CodecUtils;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Random;
 import java.util.stream.IntStream;
 import java.util.zip.Deflater;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class GnssReportProtoTest
 {
@@ -66,8 +63,10 @@ public class GnssReportProtoTest
 
 
         byte[] original = wrapperToEncode.toByteArray();
-        String javaEncoded = Base64.getEncoder().encodeToString(original);
-        byte[] serialized = Base64.getDecoder().decode(javaEncoded);
+
+
+        String javaEncoded = CodecUtils.base16Encode(original);
+        byte[] serialized = CodecUtils.base16Decode(javaEncoded);
 
         boolean equals = Arrays.equals(original, serialized);
 
