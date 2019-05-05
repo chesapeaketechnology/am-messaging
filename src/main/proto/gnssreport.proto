@@ -109,10 +109,11 @@ message GNSSMeasurement {
 
 enum RfStatus {
     // Unknown if initializing, calibrating, etc.
-    UNKNOWN_STATUS = 0;
-    OK = 1;
-    JAMMED = 2;
-    SPOOFED = 3;
+    NORMAL = 0;
+    DEGRADED = 1;
+    POSSIBLE_INTERFERENCE = 2;
+    JAMMED = 3;
+    SPOOFED = 4;
 }
 
 enum Constellation {
