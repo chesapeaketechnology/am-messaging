@@ -242,3 +242,5 @@ dkms.conf
 
 
 .DS_Store
+.idea/misc.xml
+.idea/vcs.xml
